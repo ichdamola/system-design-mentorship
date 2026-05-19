@@ -1,32 +1,35 @@
-# Week 08: Design Web Crawler
+# Week 08: Design a Web Crawler
 
 ## 🎯 The prompt
 
 Design a polite, scalable web crawler that fetches billions of pages, respects robots.txt, deduplicates content, and feeds a downstream index (search, RAG, archive).
+
+**Constraints the interviewer might give you:**
+
+- 1B pages to crawl
+- Target completion: 30 days
+- Respect robots.txt and per-domain politeness
+- Detect and skip duplicate / near-duplicate content
+- Storage of fetched content: ~5 TB
 
 **Suggested time budget:** 45 minutes
 
 | Phase | Time |
 |---|---|
 | Clarify scope | 5 min |
-| Design + high-level architecture | 25 min |
-| Deep dive + tradeoffs | 15 min |
+| URL frontier + worker fleet | 25 min |
+| Politeness + deduplication deep dive | 15 min |
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
-2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+1. **Try this yourself first.** 45-minute timer.
+2. **Then open [answer.md](answer.md).**
+3. **Read [interviewer-cues.md](interviewer-cues.md).**
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- URL frontier (priority queue)
-- Politeness (per-domain rate limiting)
-- Content dedup (SimHash / shingling)
-- Crawl scheduling
-
----
-
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- The classic "URL frontier" abstraction
+- DNS caching and why crawl performance is often DNS-bound
+- robots.txt and crawl-delay
+- SimHash / shingling for near-duplicate detection
+- The difference between depth-first and breadth-first crawl ordering

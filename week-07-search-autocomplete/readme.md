@@ -4,29 +4,32 @@
 
 Design the autocomplete suggestions that appear as a user types into a search bar (Google Suggest, YouTube search, etc.). Latency budget: ~50ms.
 
+**Constraints the interviewer might give you:**
+
+- 100B queries per day globally
+- 10 character average query length
+- Suggestions update daily (yesterday's popular queries inform today's suggestions)
+- Personalized per user (favor their language, location, history)
+- 99.9% availability
+
 **Suggested time budget:** 45 minutes
 
 | Phase | Time |
 |---|---|
 | Clarify scope | 5 min |
-| Design + high-level architecture | 25 min |
-| Deep dive + tradeoffs | 15 min |
+| Trie + Top-K design | 25 min |
+| Distributed indexing + tradeoffs | 15 min |
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
-2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+1. **Try this yourself first.** 45-minute timer.
+2. **Then open [answer.md](answer.md).**
+3. **Read [interviewer-cues.md](interviewer-cues.md).**
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- Trie data structure
-- Aggregating popular queries
-- Personalization
-- Real-time updates vs. batch builds
-
----
-
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- Trie data structure and how prefix queries work on it
+- Top-K problems (heap-based selection)
+- The difference between batch indexing and real-time indexing
+- Locality / geographic deployment
+- N-grams (briefly — not the canonical answer but worth knowing as an alternative)
