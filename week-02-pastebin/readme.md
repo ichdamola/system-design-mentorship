@@ -1,8 +1,15 @@
-# Week 02: Design Pastebin
+# Week 02: Design a Pastebin
 
 ## 🎯 The prompt
 
-Design a service where users paste text (code, logs, etc.) and get back a short URL that anyone can visit to view the content. Think pastebin.com or gist.github.com.
+Design a service where users paste text (code snippets, error logs, configs) and get back a short URL anyone can visit to view the content. Think pastebin.com or gist.github.com.
+
+**Constraints the interviewer might give you:**
+
+- 10M new pastes per month
+- Average paste size: 10 KB; max: 1 MB
+- 5:1 read/write ratio
+- Pastes can be public, unlisted, or set to expire
 
 **Suggested time budget:** 45 minutes
 
@@ -14,18 +21,14 @@ Design a service where users paste text (code, logs, etc.) and get back a short 
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
+1. **Try this yourself first.** Set a 45-minute timer.
 2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+3. **Read [interviewer-cues.md](interviewer-cues.md)** for the senior-vs-mid signal.
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- Text storage at scale (blob store vs. DB)
-- Expiration semantics
-- Public vs. unlisted vs. private
-
----
-
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- HTTP basics
+- Object storage (S3-style blob stores) and pre-signed URLs
+- TTL / expiration patterns
+- The URL shortener problem ([Week 01](../week-01-url-shortener/)) — this builds on it
+- Content vs. metadata separation

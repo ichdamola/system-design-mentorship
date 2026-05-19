@@ -1,32 +1,42 @@
-# Week 04: Design Distributed Key-Value Store
+# Week 04: Design a Distributed Key-Value Store
 
 ## 🎯 The prompt
 
-Design a distributed key-value store like Redis Cluster or DynamoDB — get/put/delete on string keys, sharded across many nodes, with replication for durability.
+Design a distributed key-value store like Redis Cluster or DynamoDB — `get(key)`, `put(key, value)`, `delete(key)` on string keys, sharded across many nodes, with replication for durability.
+
+**Constraints the interviewer might give you:**
+
+- 10 PB of data total
+- 100k operations per second sustained
+- Values up to 1 MB
+- Multi-region replication
+- 99.99% availability target
 
 **Suggested time budget:** 45 minutes
 
 | Phase | Time |
 |---|---|
 | Clarify scope | 5 min |
-| Design + high-level architecture | 25 min |
-| Deep dive + tradeoffs | 15 min |
+| Sharding + replication architecture | 25 min |
+| Failure-mode deep dive + tradeoffs | 15 min |
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
-2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+1. **Try this yourself first.** Set a 45-minute timer.
+2. **Then open [answer.md](answer.md).**
+3. **Read [interviewer-cues.md](interviewer-cues.md).**
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- Consistent hashing
-- Replication (sync vs. async)
-- Quorum reads/writes
-- Hot-key problem
+- Consistent hashing (and why it beats `hash(key) % N`)
+- Quorum reads/writes (R + W > N → strong consistency)
+- The CAP theorem (and its limits — you can't pick one and forget the others)
+- The Dynamo paper and the Cassandra paper, at least in outline
+- Vector clocks vs. last-write-wins
+- Anti-entropy: Merkle trees, hinted handoff, read repair
 
----
+## 📖 Helpful reading before you attempt
 
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- *Dynamo: Amazon's Highly Available Key-Value Store* (the original paper)
+- Cassandra's architecture docs
+- Kleppmann, *DDIA*, chapters 5-6
