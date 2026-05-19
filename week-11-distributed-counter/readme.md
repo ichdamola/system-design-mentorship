@@ -1,32 +1,35 @@
-# Week 11: Design Distributed Counter (YouTube views)
+# Week 11: Design a Distributed Counter (YouTube views)
 
 ## 🎯 The prompt
 
-Design the system that counts video views on YouTube — billions of increment events per day, eventual consistency is fine, but views must be 'roughly' accurate within seconds.
+Design the system that counts video views on YouTube — billions of increment events per day, eventual consistency is fine, but views must be "roughly" accurate within seconds for the displayed count.
+
+**Constraints the interviewer might give you:**
+
+- 5B videos in catalog
+- 50B view events per day (avg 10 views/video; long tail)
+- Top videos: 10M+ views per hour
+- Display latency: counter on the video page must be < 1s stale
+- Reads ≫ writes (every page load reads; only viewers write)
 
 **Suggested time budget:** 45 minutes
 
 | Phase | Time |
 |---|---|
 | Clarify scope | 5 min |
-| Design + high-level architecture | 25 min |
-| Deep dive + tradeoffs | 15 min |
+| Sharded counter + aggregation pipeline | 25 min |
+| Hot-key + accuracy tradeoffs | 15 min |
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
-2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+1. **Try this yourself first.** 45-minute timer.
+2. **Then open [answer.md](answer.md).**
+3. **Read [interviewer-cues.md](interviewer-cues.md).**
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- Sharded counters
-- Approximate counting (HyperLogLog)
-- Counter aggregation pipeline
-- Fraud / bot detection
-
----
-
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- The hot-key problem (one key getting all the traffic)
+- Sharded counters and how to combine them on read
+- Lambda architecture (batch + streaming)
+- HyperLogLog for approximate unique counts
+- The difference between exact and approximate counting (and why YouTube doesn't care about exact)

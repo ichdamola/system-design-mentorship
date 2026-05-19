@@ -1,32 +1,35 @@
-# Week 10: Design Notification System
+# Week 10: Design a Notification System
 
 ## 🎯 The prompt
 
 Design a service that sends notifications (push, email, SMS) to users — triggered by application events, with deduplication, batching, and per-user preferences.
+
+**Constraints the interviewer might give you:**
+
+- 100M notifications per day across all channels
+- ~70% push, 20% email, 10% SMS
+- Per-user preferences (quiet hours, channel selection, opt-outs)
+- Idempotent: same event triggered twice must send one notification
+- Multi-provider per channel (FCM + APNS for push, multiple SMS vendors for failover)
 
 **Suggested time budget:** 45 minutes
 
 | Phase | Time |
 |---|---|
 | Clarify scope | 5 min |
-| Design + high-level architecture | 25 min |
-| Deep dive + tradeoffs | 15 min |
+| Multi-channel pipeline | 25 min |
+| Idempotency + provider failover deep dive | 15 min |
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
-2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+1. **Try this yourself first.** 45-minute timer.
+2. **Then open [answer.md](answer.md).**
+3. **Read [interviewer-cues.md](interviewer-cues.md).**
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- Channel abstraction (push/email/SMS)
-- Provider fallback
-- Quiet hours and user preferences
-- Idempotency on retry
-
----
-
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- Idempotency keys
+- Outbox pattern (vs. dual-write)
+- Channel abstractions (push, email, SMS as plug-ins)
+- Backpressure on downstream providers
+- The concept of a quiet-hours window
