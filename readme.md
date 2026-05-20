@@ -68,10 +68,6 @@ Interleaved through every step: 💬 **"how to say it"** callouts — literal ph
 | ☐ | 15 | [Payments + idempotency (Stripe)](week-15-payments) | ⭐⭐⭐⭐ |
 | ☐ | 16 | [Distributed search (Elasticsearch)](week-16-distributed-search) | ⭐⭐⭐⭐ |
 
-> 🚧 **Currently scaffolded.** [Week 01](week-01-url-shortener) is fully fleshed
-> as the format reference. Weeks 02–16 have skeleton files in place and will be
-> written out over time.
-
 ## 📋 How each week works
 
 Open the week's folder. You'll find three files:
