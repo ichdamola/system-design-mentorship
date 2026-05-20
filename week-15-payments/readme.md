@@ -4,29 +4,33 @@
 
 Design a payment processing service: API takes a charge request, talks to card networks, returns success/failure. Must be exactly-once even with network retries.
 
+**Constraints the interviewer might give you:**
+
+- 10k charges/sec at peak (Black Friday)
+- < 500ms p99 charge latency
+- Idempotent: retried charge with same key never double-charges
+- Card network can return after timeout — we must not lose the result
+- Must support multi-step flows (auth + capture, refunds, partial refunds)
+
 **Suggested time budget:** 45 minutes
 
 | Phase | Time |
 |---|---|
 | Clarify scope | 5 min |
-| Design + high-level architecture | 25 min |
-| Deep dive + tradeoffs | 15 min |
+| Idempotency + ledger architecture | 25 min |
+| Card-network reconciliation deep dive | 15 min |
 
 ## ✅ Your job
 
-1. **Try this yourself first.** Set a 45-minute timer and work through the 10 steps without looking at the answer.
-2. **Then open [answer.md](answer.md).** Compare your approach.
-3. **Skim [interviewer-cues.md](interviewer-cues.md)** for what a senior interviewer is *really* listening for.
+1. **Try this yourself first.** 45-minute timer.
+2. **Then open [answer.md](answer.md).**
+3. **Read [interviewer-cues.md](interviewer-cues.md).**
 
-## 💡 What this week is really about
+## 💡 What you should already know
 
-- Idempotency keys
-- Two-phase commit vs. saga vs. outbox
-- Reconciliation with external systems
-- PCI scope and data isolation
-
----
-
-> 🚧 **This week is scaffolded.** The 10-step skeleton is in place in
-> [answer.md](answer.md); full content will be written out over time. See
-> [Week 01](../week-01-url-shortener/) for the format your answer file will follow.
+- Idempotency keys at the API layer
+- Outbox pattern for reliable async work
+- Saga vs. two-phase commit for distributed transactions
+- Double-entry ledger basics
+- PCI-DSS scope minimization
+- The fact that real payment networks are *not* idempotent (they can return after a timeout)
