@@ -149,7 +149,12 @@ The 9-cell lookup is the trick — a query point near a cell edge needs neighbor
 
 ### Alternative: Google S2 / Uber's H3
 
-S2 (Google) and H3 (Uber's own library) are hierarchical cells like geohash but better behaved at high latitudes. Uber publicly uses **H3** for this exact problem — hexagonal cells avoid the "two cells, same area, different sizes" pathology of geohash.
+S2 (Google) and H3 (Uber's own library) are hierarchical cells like geohash but better behaved at high latitudes. Uber publicly uses **H3** for this exact problem. Hex cells beat geohash's lat/lng rectangles for two concrete reasons:
+
+1. **Equal-distance neighbors.** A hexagon has 6 neighbors all at the same center-to-center distance; a rectangle has 4 close neighbors and 4 diagonal ones at √2× the distance. Radius-search math becomes uniform — "every neighbor cell is one step" instead of "is this diagonal in range?"
+2. **Less area distortion across latitudes.** Geohash cells get aggressively narrower toward the poles; H3 cells have ≤2× area variance globally (vs ~7× for geohash).
+
+Result: hot-spot detection, k-nearest-driver search, and supply-demand heatmaps all work with simpler code paths.
 
 ```mermaid
 ---

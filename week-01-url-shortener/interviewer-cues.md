@@ -8,7 +8,7 @@ This is the meta layer. None of it is in the answer file; all of it is what a se
 |---|---|
 | You ask 2+ clarifying questions before drawing | "Stops to think, doesn't rush." |
 | You name the read/write ratio early | "Sees the problem shape, not just the surface." |
-| You sketch numbers (40 writes/sec → 4k reads/sec) | "Comfortable with scale, doesn't hand-wave." |
+| You sketch numbers (40 writes/sec → 400 reads/sec avg, ~4k peak) | "Comfortable with scale, doesn't hand-wave." |
 | You explain *why* 302 not 301 | "Knows the protocol details." |
 | You spontaneously flag the enumeration attack | "Thinks about security without being prompted." |
 | You separate the read service from the write service | "Knows that read-heavy systems need independent scaling." |

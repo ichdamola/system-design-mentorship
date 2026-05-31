@@ -158,9 +158,17 @@ Two layers of dedup:
 URL set: 1B URLs × ~50 B average → 50 GB
 ```
 
-A Bloom filter is the classic answer here — false positives are acceptable (we lose a duplicate, no harm), and 50 GB → ~10 GB Bloom with 1% false-positive rate.
+A Bloom filter is the classic answer here — false positives are acceptable (we lose a duplicate, no harm). Sizing depends on the FPR target:
 
-> 💬 **How to say it:** "URL dedup is a Bloom filter — 10 GB instead of 50 GB, and a false positive just means we skip a URL we technically haven't seen. False negatives are zero. Perfect tradeoff for this use case."
+| FPR target | Bits / item | Total size (1B URLs) |
+|---|---|---|
+| 1% | ~9.6 | **~1.2 GB** |
+| 0.1% | ~14.4 | ~1.8 GB |
+| 0.01% | ~19.2 | ~2.4 GB |
+
+So 50 GB of URL strings collapses to ~1.2 GB of Bloom (a 40× win) at the standard 1% FPR target. If you're crawling at trillion-URL scale you'd pick a tighter FPR and accept the linear size growth.
+
+> 💬 **How to say it:** "URL dedup is a Bloom filter — 1.2 GB instead of 50 GB at a 1% false-positive rate. A false positive just means we skip a URL we technically haven't seen; false negatives are zero. The bits-per-item formula gives you knob-tuning over FPR vs. memory."
 
 ### Content-level (is this a near-duplicate of an existing page?)
 

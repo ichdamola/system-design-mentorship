@@ -127,8 +127,9 @@ This is where the interview happens. Four classic algorithms:
 | **Sliding window counter** | Hybrid: current-window count + weighted previous-window count | Cheap, accurate enough | Slight inaccuracy in the weighting |
 | **Token bucket** ✅ | Bucket holds N tokens; refill at rate R; each request consumes 1 token | Allows bursts up to bucket size, smooths sustained load, well-understood | Slightly more state (tokens + last_refill timestamp) |
 | **Leaky bucket** | Requests queue; drained at fixed rate R | Smooths bursts | Doesn't fit HTTP semantics (we want allow/deny, not enqueue) |
+| **GCRA** (Generic Cell Rate Algorithm) | Token bucket reformulated as "next allowed time"; only stores one timestamp per key | Same semantics as token bucket, half the state, branchless math | Slightly less intuitive to explain on a whiteboard |
 
-**My pick: token bucket.** It matches how customers think ("you can burst up to 100, then sustain 10/sec"), it's cheap to compute, and it's what most production limiters (AWS, Stripe, Cloudflare) actually use.
+**My pick: token bucket.** It matches how customers think ("you can burst up to 100, then sustain 10/sec"), it's cheap to compute, and it's what most production limiters (AWS, Stripe, Cloudflare) actually use. **GCRA is what Stripe and Cloudflare's published implementations actually store** — it's token bucket compressed to a single `tat` (theoretical arrival time) timestamp per key, which lowers Redis memory and makes the check branchless. Mentioning GCRA when picking token bucket earns the senior cue.
 
 ### Token bucket implementation in Redis
 

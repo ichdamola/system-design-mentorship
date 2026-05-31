@@ -120,7 +120,7 @@ flowchart LR
 
 The displayed count is approximately the speed layer's number; periodically it gets corrected by the batch layer.
 
-> 💬 **How to say it:** "Lambda architecture. Speed layer for real-time approximations, batch layer for exact reconciliation. The display reads from a cache fed by the speed layer; once an hour, the batch layer corrects any drift."
+> 💬 **How to say it:** "Lambda architecture is the textbook answer — speed layer for real-time approximations, batch layer for exact reconciliation. The display reads from a cache fed by the speed layer; once an hour, the batch layer corrects any drift. The 2024 alternative is **Kappa** — streaming-only on Flink/Kafka with event-time replay, which collapses the two layers into one engine. Lambda is safer when your streaming framework can't correctly reprocess history; Kappa is cheaper to operate when it can. Pick based on your team's streaming maturity."
 
 ## 7. Deep dive: sharded counters
 
@@ -257,7 +257,6 @@ PFCOUNT video_123:hll              # approximate unique
 **What I chose against:**
 
 - Exact counts at every increment (would require synchronous writes at 5M/sec)
-- Kappa (streaming-only) architecture — losing the batch layer means no recovery from bugs in streaming
 - Single-shard counter (one viral video kills you)
 - Reading the count without caching (50M reads/sec demolishes any backend)
 

@@ -54,8 +54,11 @@
 | Upload volume | ~720k hours/day | 500 hr × 60 × 24 |
 | Storage growth (compressed) | ~30 PB / day uploaded × 6 encodings × 0.3 compression = ~50 PB / day | encoding ladder explodes the per-video storage |
 | Total catalog | ~1 EB | 13B videos × ~80 MB avg per encoding × 6 encodings |
-| Viewing bandwidth | 5B hours / 86,400 = 58k concurrent streams × avg 3 Mbps = 175 Gbps | Massive |
-| 95% from top 5% | Hot content is tiny fraction of catalog | Tier accordingly |
+| Concurrent viewers (avg) | 5B view-hr/day ÷ 24 h/day ≈ **208M** | Total view-hours flattened over the day |
+| Concurrent viewers (peak) | ~2× avg → **~400M** | Primetime in each region overlaps |
+| Viewing bandwidth (avg, 3 Mbps) | 208M × 3 Mbps ≈ **624 Tbps** | Sustained |
+| Viewing bandwidth (peak) | ~1.2 **Pbps** | The number that sizes the CDN |
+| 95% from top 5% | Hot content is a tiny fraction of catalog | Tier accordingly |
 
 **Insight:** the storage cost dominates, not the compute. Transcoding is one-time; storage and bandwidth are forever. **The CDN strategy and storage tiering are the dominant design decisions.**
 
@@ -168,7 +171,22 @@ flowchart LR
 
 For a 10-minute video at 1 GB raw, transcoded encodings sum to ~500 MB. Stored as 2-10 second chunks.
 
-> 💬 **How to say it:** "Encoding ladder of 6 qualities. We chunk the video into 10-second segments, transcode each segment to each quality in parallel. Output is per-quality manifests pointing at chunk URLs. The player adapts bitrate between chunks."
+### Codec choice (the modern win)
+
+| Codec | Compression vs H.264 | Where it's used | Why pick it |
+|---|---|---|---|
+| H.264 (AVC) | baseline | Universal — every device | Compatibility floor; ship this always |
+| H.265 (HEVC) | ~50% smaller | Apple ecosystem; 4K BD | Licensing fees made it niche on the web |
+| VP9 | ~50% smaller | YouTube default since 2014 | Royalty-free; Google-pushed |
+| AV1 | ~30% smaller than VP9 | YouTube, Netflix tier-1 catalog (2020+); Vimeo | Royalty-free; the 2024-2026 frontier |
+
+A modern encoding ladder isn't 6 cells — it's a *matrix* of `(resolution × codec)`. You ship H.264 to legacy devices, AV1 to modern browsers, and let HLS/DASH negotiate per client.
+
+### Per-shot encoding (Netflix 2018+)
+
+Naive ladders use the same bitrate for every video at a given resolution. Per-shot (or per-title) encoding analyzes each shot independently and picks the bitrate-quality knee for *that* content — talking-head footage gets much lower bitrate than action scenes at the same VMAF score. Result: **~30% bitrate reduction at equal perceived quality**. Netflix's blog posts (2018, 2022) cover this.
+
+> 💬 **How to say it:** "Encoding ladder is a `(resolution × codec)` matrix, not just a list of resolutions — H.264 as the compatibility floor, VP9 or AV1 on modern clients for a 30-50% bitrate cut. Per-shot encoding is the Netflix-style optimization that picks a bitrate per shot based on content complexity — same VMAF, ~30% fewer bits. The player adapts between chunks via HLS or DASH."
 
 ### Why chunks, not single files
 
@@ -222,7 +240,7 @@ This is an offline process — usage logs drive it.
 |---|---|---|
 | Upload bandwidth | 30 GB/sec aggregate | Direct upload to S3 via presigned URLs; never touches our service |
 | Transcode compute | ~5M minutes of video / day | Worker fleet sized for ~30 min lag tolerance; spot instances for cost |
-| CDN bandwidth | 175 Gbps+ to viewers | CDN provider handles; we pay the bill |
+| CDN bandwidth | Hundreds of Tbps sustained, ~1 Pbps at peak | Delivered through hundreds of PoPs each carrying tens of Tbps; CDN provider handles; we pay the bill |
 | CDN cache size | ~100 PB across PoPs | Top 5% only at each PoP; everything else fetched on demand |
 | Storage cost | $$$ at exabyte scale | Tiering to Glacier; aggressive compression; delete-if-zero-views-in-N-years policies for low-quality uploads |
 | Origin fetch under viral spike | 1 video suddenly goes viral; CDN cold-misses | Pre-warm hot content to nearest PoPs; rate-limit origin fetch with single-flight |
@@ -266,6 +284,6 @@ This is an offline process — usage logs drive it.
 - **Synchronous transcoding on upload.** Creators wait 10 minutes; doesn't scale.
 - **One storage tier.** Storage cost dominates at scale; tiering is mandatory.
 - **Upload through your own servers.** Direct-to-S3 via presigned is the only viable path at this throughput.
-- **No CDN strategy.** "Just put it in S3" doesn't deliver 175 Gbps with low latency.
+- **No CDN strategy.** "Just put it in S3" doesn't deliver hundreds of Tbps with low latency.
 
 See [interviewer-cues.md](interviewer-cues.md).

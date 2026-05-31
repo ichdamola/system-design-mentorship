@@ -49,7 +49,7 @@
 | Quantity | Value | Working |
 |---|---|---|
 | Posts/sec (avg) | ~1,200 | 100M / 86,400 |
-| Feed reads/sec (avg) | ~12,000 | 10× write |
+| Feed reads/sec (avg) | ~12,000 | **Assume 10× write rate** — each post is read by ~10 followers on average across its lifetime, normalized into a steady-state read rate. State this assumption out loud if the prompt doesn't give a ratio. |
 | Feed reads/sec (peak) | ~120,000 | 10× avg |
 | Avg followers per user | ~300 | Per problem |
 | Naive fan-out writes/post | 300 | One write per follower's timeline |

@@ -56,13 +56,13 @@ State your assumptions, in or out.
 |---|---|---|
 | New URLs/sec (avg) | ~40 | 100M / (30 × 86,400) |
 | New URLs/sec (peak) | ~400 | 10× average for traffic spikes |
-| Reads/sec (avg) | ~4,000 | 10× write rate |
-| Reads/sec (peak) | ~40,000 | 10× average |
+| Reads/sec (avg) | ~400 | 10× write rate |
+| Reads/sec (peak) | ~4,000 | 10× average |
 | Storage per record | ~500 B | URL ≤ 200 chars + metadata |
 | Total storage (5 yr) | ~3 TB | 100M × 12 × 5 × 500 B |
 | Cache size (hot 20%) | ~600 GB | Pareto assumption |
 
-> 💬 **How to say it:** "Let me do some quick math so we know what scale we're sizing for. 100M per month is roughly 40 writes per second, and reads are 10× that, so ~4,000 reads per second average."
+> 💬 **How to say it:** "Let me do some quick math so we know what scale we're sizing for. 100M per month is roughly 40 writes per second, and reads are 10× the write rate, so ~400 reads per second average — peaking around 4,000."
 
 **Watch the cache number.** 600 GB doesn't fit on one Redis node, so you'll need a Redis cluster. That's a callback for later.
 
@@ -201,7 +201,15 @@ At 10× scale (1B new URLs/month), where does this break?
 
 **The non-obvious one: CDN for redirects.** A redirect is just "given key, return one of N URLs." That's exactly what a CDN edge cache is for. Put your most popular short URLs at the edge and you serve millions of redirects without touching your own infrastructure.
 
-> 💬 **How to say it:** "The most impactful scaling move is putting popular short URLs behind a CDN. A 302 redirect is something CloudFront or Fastly can do in 5ms at the edge, and it offloads my read tier entirely for the long tail of hot URLs."
+**Cache stampede (thundering herd).** When a hot URL's cache entry expires, every concurrent request misses simultaneously and hammers the database. Three defenses, in order of operational simplicity:
+
+1. **Single-flight / request coalescing** — only one goroutine/worker fetches; the rest wait on its result. Go's `singleflight`, Java's `Caffeine`, Python's `aiocache` all ship this.
+2. **Probabilistic early expiration** — refresh the cache *before* it expires, with probability rising as TTL approaches zero. Cuts the synchronized-miss event.
+3. **Stale-while-revalidate** — serve the old value while async-refreshing. Acceptable here because URL→long URL is effectively immutable.
+
+**Observability:** alarm on cache hit rate < 95% (sustained for 5 min) and DB query rate from the read path; both predict imminent latency breach.
+
+> 💬 **How to say it:** "The most impactful scaling move is putting popular short URLs behind a CDN. A 302 redirect is something CloudFront or Fastly can do in 5ms at the edge, and it offloads my read tier entirely for the long tail of hot URLs. The failure mode to guard against is cache stampede — when a hot key expires, single-flight coalescing prevents N concurrent misses from hammering the database."
 
 ## 10. Tradeoffs + what you'd change
 

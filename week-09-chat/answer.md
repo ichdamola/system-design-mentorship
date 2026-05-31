@@ -266,6 +266,7 @@ For groups, this can be heavy (250 read receipts per popular message). Solutions
 
 **Given more time, I'd dig into:**
 
+- **WebSocket over HTTP/3 / QUIC** (RFC 9220) — QUIC's connection migration and 0-RTT reconnect cut handshake cost when mobile clients flip networks (Wi-Fi → cellular), and the per-stream multiplexing avoids TCP head-of-line blocking on lossy networks. Modern chat (WhatsApp on Android, Messenger, Signal) is already migrating. Worth mentioning in tradeoffs.
 - E2E (Signal protocol — Double Ratchet, X3DH key exchange)
 - Multi-device sync (each device gets its own inbox)
 - Media attachments (separate upload pipeline; messages carry refs)

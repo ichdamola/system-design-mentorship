@@ -50,7 +50,8 @@
 |---|---|---|
 | Total concurrent viewers | ~100M | 100k × 1k avg |
 | Concurrent connections (WebSocket) | ~100M | Each viewer one connection |
-| Avg messages/sec across all rooms | ~1.7M | 100k rooms × 1k viewers × 1 msg/min ÷ 60 |
+| Avg messages/sec across all rooms (100% participation) | ~1.7M | 100k rooms × 1k viewers × 1 msg/min ÷ 60 |
+| Avg messages/sec across all rooms (realistic, ~10% participate) | ~170k | Most viewers lurk; only a minority chat. Cite this and the 100% bound — interviewer wants both. |
 | Peak fan-out in one room | 1M viewers × 1k msg/sec = 1B msgs/sec | Inside one room — undeliverable |
 | Replay buffer size per room | 100 × ~100 B = 10 KB | Trivial; Redis list |
 | WebSocket connections per server | ~100k | Practical limit |

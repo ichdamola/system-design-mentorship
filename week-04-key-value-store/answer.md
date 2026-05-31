@@ -209,10 +209,11 @@ If two clients write the same key simultaneously to different replicas, you have
 |---|---|---|---|
 | **Last-write-wins** | Each write tagged with a timestamp; replicas keep the highest | Simple | Clock skew can lose writes |
 | **Vector clocks** | Track causality per replica | Detects true conflicts | Client has to resolve them (or the app does) |
+| **CRDTs** | Datatype is mathematically conflict-free by construction (G-counter, OR-set, LWW-register, RGA) | Merges always succeed; no client logic | Restricted to data types that fit the CRDT model |
 
-Default to LWW for an interview unless asked otherwise; mention vector clocks as the "correct but harder" alternative.
+Default to LWW for an interview unless asked otherwise; mention vector clocks as the "correct but harder" alternative, and CRDTs as the modern third option (Riak swapped vector clocks for CRDTs; Redis Active-Active uses them; Automerge / Yjs are the consumer-grade libraries).
 
-> 💬 **How to say it:** "LWW by default with NTP-synchronized clocks. Vector clocks are more correct but they push conflict resolution onto the client, and most use cases don't need that level of rigor."
+> 💬 **How to say it:** "LWW by default with NTP-synchronized clocks. Vector clocks are more correct but they push conflict resolution onto the client, and most use cases don't need that level of rigor. CRDTs are the modern alternative when your datatype fits — counters, sets, registers, sequences — because merges become a property of the type instead of application logic."
 
 ## 9. Bottlenecks + scaling
 

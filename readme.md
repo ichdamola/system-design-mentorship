@@ -32,7 +32,7 @@ flowchart LR
         direction TB
         S5["5. API design"]
         S6["6. High-level architecture"]
-        S7["7. Data model"]
+        S7["7. Data model<br/>(or a second deep<br/>dive if the data<br/>model is trivial)"]
     end
 
     subgraph defend["Final 15 min — Defend it"]
@@ -46,6 +46,8 @@ flowchart LR
 ```
 
 Interleaved through every step: 💬 **"how to say it"** callouts — literal phrases a strong candidate uses.
+
+**On step 7:** the default is a data-model sketch (schema + key choices + access patterns). When the data model is trivial — counters, full-text search, dispatch, payments — substitute a second deep dive on the *next* hardest sub-problem instead. Roughly 10 of the 16 weeks take that substitution; it's noted in each week's `answer.md`.
 
 ## 📁 Curriculum
 
@@ -98,6 +100,33 @@ Open the week's folder. You'll find three files:
 3. **Numbers, not adjectives.** "Large scale" is meaningless. Show the math.
 4. **Surface tradeoffs.** Every design has them. Saying them out loud is half the signal.
 5. **Boring tech first.** Reach for Cassandra after you've justified why Postgres won't do.
+
+## 📡 Cross-cutting concern: observability
+
+Every system has the same set of "how do I know it's broken?" questions, regardless of week. Senior interviewers at Google / Meta / Stripe will ask for at least one of these on every problem — surface them in step 9 (bottlenecks) of your answer.
+
+**The four golden signals (Google SRE):**
+
+| Signal | What you measure | Typical alarm |
+|---|---|---|
+| Latency | p50 / p95 / p99 per endpoint | p99 > N ms for 5 min |
+| Traffic | requests / sec | Drop > 50% vs. baseline (silent outage) |
+| Errors | 5xx rate, app-level error rate | > 1% for 5 min |
+| Saturation | CPU / mem / queue depth / connection pool | > 80% sustained |
+
+**RED for request-driven services:** Rate, Errors, Duration.
+**USE for resources:** Utilization, Saturation, Errors.
+
+**SLO budget thinking:** if your SLO is 99.9% over 30 days, your error budget is 43 minutes/month. Burn rate alerts ("budget will be exhausted in N hours at current rate") wake on-call before the SLO is missed.
+
+**Per-week observability prompt:** when you reach step 9 of any answer, narrate:
+
+1. **What's the SLO?** (e.g. "p99 read latency < 100 ms for redirects, 99.95% availability")
+2. **What's the leading indicator?** (e.g. "cache hit rate dropping below 90% predicts latency breach")
+3. **What's the blast radius?** (e.g. "a single shard going hot affects 1/32 of traffic, not the whole system")
+4. **What do you alarm on?** (the metric + threshold + duration window)
+
+Tooling lexicon to know cold: **Prometheus + Grafana** (open source canonical), **Datadog / New Relic / Honeycomb** (commercial), **OpenTelemetry** (vendor-neutral instrumentation), **Jaeger / Zipkin** (distributed tracing), **PagerDuty / Opsgenie** (alert routing).
 
 ## 📚 Recommended Reading
 
